@@ -74,6 +74,7 @@ function main_process()
         border: 1px solid #CCC;
         border-radius: 1rem;
         padding: 1rem;
+        margin-bottom: 1rem;
     }
 
     div.addr {
@@ -90,16 +91,16 @@ function main_process()
     <body>
 
     <h2>Discovered Services</h2>
-    <div class='server'>
     ]])
     for sid, entry in pairs(state) do
+        io.write("<div class='server'>\n")
         io.write(string.format("<div class='addr'>%s</div>\n", entry.addr))
         for service, _ in pairs(entry.services) do
             io.write(string.format("<div class='service'><a href='%s'>%s</a></div>\n", service2link(entry.addr, service), service2name(service)))
         end
+        io.write("</div>\n")
     end
     io.write([[
-    </div>
     </body>
     </html>
     ]])
