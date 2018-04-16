@@ -92,8 +92,6 @@ function main_process()
     <h2>Discovered Services</h2>
     <div class='server'>
     ]])
-    io.write(string.format("host=%s",host))
-    io.write(string.format("uri=%s",uri))
     for sid, entry in pairs(state) do
         io.write(string.format("<div class='addr'>%s</div>\n", entry.addr))
         for service, _ in pairs(entry.services) do

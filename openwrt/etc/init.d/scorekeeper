@@ -25,7 +25,7 @@ start_watcher()
 
 start_service() 
 {
-        start_redirector()
-        start_watcher()
+        start_redirector
+        start_watcher
 }
 
