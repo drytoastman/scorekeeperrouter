@@ -1,5 +1,5 @@
-# scorekeeperopenwrt
+# scorekeeperrouter
 
-Utilities to run on an OpenWRT router to help users locate registration or results services.
+Utilities to run on an wireless router to help users locate registration or results services.
 
 

@@ -1,7 +1,5 @@
 #!/usr/bin/lua
 
--- /usr/sbin/uhttpd -h /scorekeeper -x / -I redirector.lua -p 0.0.0.0:80
-
 local json = require ("dkjson")
 
 function readstate()

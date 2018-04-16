@@ -1,0 +1,6 @@
+Package: scorekeeper
+Version: 2.2.2
+Depends: uhttpd, lua, luasocket, dkjson
+License: GPLv3
+Maintainer: Brett Wilson
+Description: Listener for scorekeeper services and redirect for web traffic based on discovered values
