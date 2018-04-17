@@ -13,17 +13,27 @@ end
 function main_process() 
     local group = "224.0.0.251"
     local port = 5454
-    local c = socket.udp()
+    local sock = socket.udp()
+    local servers = {}
 
-    c:settimeout(1)
-    c:setoption("reuseport", true)
-    c:setsockname("0.0.0.0", port)
-    c:setoption("ip-add-membership", {multiaddr=group, interface="192.168.10.8"})
+    sock:settimeout(1)
+    sock:setoption("reuseport", true)
+    sock:setsockname("0.0.0.0", port)
 
-    servers = {}
+    -- Run ifconfig and parse out IP addresses that are not localhost, we listen to all
+    local handle = io.popen('ifconfig')
+    local result = handle:read("*a")
+    for ip in string.gmatch(result, "inet addr:(%d+.%d+.%d+.%d+)") do
+        if string.sub(ip, 1, 5) ~= "127.0" then
+            --print(string.format("Add membership on %s", ip))
+            sock:setoption("ip-add-membership", {multiaddr=group, interface=ip})
+        end
+    end
+    handle:close()
+
 
     while 1 do
-        local msg, src = c:receivefrom()
+        local msg, src = sock:receivefrom()
         if msg then
            local obj, pos, err = json.decode(msg)
 
