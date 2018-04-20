@@ -1,0 +1,47 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:       scorekeeper
+# Required-Start: $network $remote_fs $syslog dnsmasq
+# Required-Stop:  $network $remote_fs $syslog
+# Default-Start:  2 3 4 5
+# Default-Stop:   0 1 6
+# Description:    Scorekeeper services
+### END INIT INFO
+
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/scorekeeper/wacther.lua
+NAME=scorekeeper
+DESC="scorekeeper watcher"
+
+set -e
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+        log_daemon_msg "Starting $DESC" $NAME
+        echo "addn-hosts=/scorekeeper/hosts" >> /etc/dnsmasq.conf
+        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /scorekeeper/hosts
+        killall -HUP dnsmasq
+        if ! start-stop-daemon --start --oknodo --quiet --exec $DAEMON; then log_end_msg 1; else log_end_msg 0; fi
+        ;;
+    stop)
+        log_daemon_msg "Stopping $DESC" $NAME
+        if start-stop-daemon --stop --retry 30 --oknodo --quiet --exec $DAEMON; then log_end_msg 0; else log_end_msg 1; fi
+        sed -i '/scorekeeper/d' /etc/dnsmasq.conf
+        killall -HUP dnsmasq
+        ;;
+
+    restart|reload|force-reload)
+        start-stop-daemon --stop --retry 30 --oknodo --quiet --exec $DAEMON
+        start-stop-daemon --start --oknodo --quiet --exec $DAEMON
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+
