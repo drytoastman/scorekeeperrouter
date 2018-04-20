@@ -1,0 +1,13 @@
+language: c
+install: make
+script: make
+deploy:
+  provider: releases
+  api_key:
+    secure: UFyyXv6OGlHHNc10fq2IAYPirAwf0fzjsaF6z/YsUVDXfZjPidiOqyKpRguvhUSg6cRajiqwv2HSd9J04mJsKfuicNWt5IwQZscA9IL25MAgMTGLQKpFY4AMfIA+ZnLy1naFmzshNDKyKUGWw7iu2OQ4+It+QdmGX8EgzmHgwuI7Db9YVJnge1D2LU7q5XZTmEo7Xt/w9L9qNTB2r0wpK67OxkbYbtJLOyWtnGc87GlprKsuwjiCW3u4cKgf+82y+mjl/Ce+HFJQrjk5Yfy2h89T9GdtqTZvH+ktKg33k/jyLcV5tMuaKmOK9ok5c80r0gVp+kqe9TE6aICBj2KEiRiHzTQl14MQ1uwBwEyZKqIgkrZ1nKDukbYIPUSR0FMVWZaxPFLZuRjp16rKJ3Ae2vuzMFPbqoFA/Ed0xnYDoCto3/a0uaAMWVBjxwkXfuqpeZfeSt9XtuK9CfqrSl+5MoYyLHlYqz2FSBdsb/kiM+KshUGTjVzJI0HHa0of0fO/w7gfFbg+ekq2bcPBkuigywF5Pecshhn/avuJwjwGc+uNrr4WJVxkdpJNUQxD7Ve/UXni9NOiHFjE/2k8INAomA5wnzgkEVLxGBvyyfXdB88EMR5QIEVe+v6RFIPEFeWGxpx/+9IQ9n5NcTLP5SIq2Dr3BCsObpNLEVSnlybsNhY=
+  file_glob: true
+  file:
+    - "openwrt/*.ipk"
+  skip_cleanup: true
+  on:
+    tags: true
