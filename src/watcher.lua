@@ -15,6 +15,7 @@ function main_process()
     local port = 5454
     local sock = socket.udp()
     local servers = {}
+    pcall(dump, servers)
 
     sock:settimeout(1)
     sock:setoption("reuseport", true)

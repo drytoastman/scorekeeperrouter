@@ -2,30 +2,40 @@
 
 START=51
 USE_PROCD=1
-UHTTPD_BIN="/usr/sbin/uhttpd"
-WATCHER_BIN="/scorekeeper/watcher.lua"
 
-start_redirector()
+reload_service()
 {
-        procd_open_instance
-        procd_set_param respawn
-        procd_set_param stderr 1
-        procd_set_param command "$UHTTPD_BIN" -f -h /scorekeeper -x / -I redirector.lua -p 0.0.0.0:80
-        procd_close_instance
+    ## actually cause a restart
+    stop
+    start
 }
 
-start_watcher()
+service_triggers()
 {
-        procd_open_instance
-        procd_set_param respawn
-        procd_set_param stderr 1
-        procd_set_param command "$WATCHER_BIN"
-        procd_close_instance
+    procd_add_raw_trigger "interface.*" 1000 /etc/init.d/scorekeeper reload
 }
 
 start_service() 
 {
-        start_redirector
-        start_watcher
+    # check uci to see if we added our config to the dhcp/dnsmasq service
+    if [ -z $(uci show dhcp | grep scorekeeper) ]; then
+        uci add_list dhcp.@dnsmasq[0].addnhosts='/scorekeeper/hosts'
+    fi
+
+    # Update our hosts table and signal dnsmasq
+    uci show network | grep ipaddr | grep -v 127.0.0.1 | awk -F "[=']" '{ print $3 " results register" }' > /scorekeeper/hosts
+    procd_send_signal dnsmasq
+
+    procd_open_instance
+    procd_set_param respawn 3600 5 5
+    procd_set_param stderr 1
+    procd_set_param command "/usr/sbin/uhttpd" -f -h /scorekeeper -x / -I redirector.lua -p 0.0.0.0:80
+    procd_close_instance
+
+    procd_open_instance
+    procd_set_param respawn 3600 5 5
+    procd_set_param stderr 1
+    procd_set_param command "/scorekeeper/watcher.lua"
+    procd_close_instance
 }
 

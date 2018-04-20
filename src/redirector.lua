@@ -90,7 +90,7 @@ function main_process()
     </head>
     <body>
 
-    <h2>Discovered Services</h2>
+    <h2>Discovered Scorekeeper Services</h2>
     ]])
     for sid, entry in pairs(state) do
         io.write("<div class='server'>\n")
