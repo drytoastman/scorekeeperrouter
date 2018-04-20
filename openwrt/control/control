@@ -1,5 +1,5 @@
 Package: scorekeeper
-Version: 2.2.3
+Version: versiongoeshere
 Architecture: all
 Depends: uhttpd, lua, luasocket, dkjson
 License: GPLv3

@@ -1,8 +1,9 @@
 
-TAG := $(shell git describe --tags --abbrev=0)
-TARGET := scorekeeper_${TAG}_all.ipk
+TRAVIS_TAG ?= $(shell git describe --tags --abbrev=0)
+TARGET := scorekeeper_${TRAVIS_TAG}_all.ipk
 
 ${TARGET}: control/* data/etc/init.d/* ../src/*.lua
+	sed -i.bak 's/Version: [^\s]\+/Version: ${TRAVIS_TAG}/' control/control
 	mkdir -p data/scorekeeper
 	cp ../src/*.lua data/scorekeeper/
 	tar --owner=0 --group=0 -czf control.tar.gz -C control control postinst prerm postrm
