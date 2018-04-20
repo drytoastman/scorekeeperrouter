@@ -70,6 +70,10 @@ function main_process()
     <title>Scorekeeper Redirector</title>
 
     <style type="text/css">
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol
+    }
+
     div.server { 
         border: 1px solid #CCC;
         border-radius: 1rem;
@@ -78,27 +82,46 @@ function main_process()
     }
 
     div.addr {
-        font-weight: bold;
+        font-weight: 500;
         font-size: 1.3rem;
     }
 
     div.service {
-        margin-left: 2rem;
+        margin-left: 1rem;
         font-size: 1.2rem;
+    }
+
+    div.service a {
+        display: inline-block;
+        width: 5rem;
+        text-align: right;
+        margin-right: 0.5rem;
+    }
+
+    div.active::after {
+        content: "\2a active";
+        font-size: 1.0rem;
+        font-weight: bold;
+        color: green;
     }
     </style>
     </head>
     <body>
 
-    <h2>Discovered Scorekeeper Services</h2>
+    <h3>Discovered Scorekeeper Servers</h3>
     ]])
     for sid, entry in pairs(state) do
-        io.write("<div class='server'>\n")
-        io.write(string.format("<div class='addr'>%s</div>\n", entry.addr))
-        for service, _ in pairs(entry.services) do
-            io.write(string.format("<div class='service'><a href='%s'>%s</a></div>\n", service2link(entry.addr, service), service2name(service)))
+        if entry.services.DATABASE then
+            io.write("<div class='server'>\n")
+            io.write(string.format("<div class='addr'>%s</div>\n", entry.addr))
+            io.write(string.format("<div class='service %s'><a href='http://%s/results'>Results</a></div>\n",
+                    entry.services.DATAENTRY and "active" or "", entry.addr))
+            io.write(string.format("<div class='service %s'><a href='http://%s/register'>Register</a></div>\n",
+                    entry.services.REGISTRATION and "active" or "", entry.addr))
+            io.write(string.format("<div class='service'><a href='http://%s/admin'>Admin</a></div>\n",
+                    entry.addr))
+            io.write("</div>\n")
         end
-        io.write("</div>\n")
     end
     io.write([[
     </body>
