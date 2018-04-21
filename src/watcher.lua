@@ -24,7 +24,11 @@ function main_process()
     -- Run ifconfig and parse out IP addresses that are not localhost, we listen to all
     local handle = io.popen('ifconfig')
     local result = handle:read("*a")
-    for ip in string.gmatch(result, "inet addr:(%d+.%d+.%d+.%d+)") do
+    local regex  = "inet (%d+.%d+.%d+.%d+)"
+    if string.find(result, "inet addr:") then
+        regex = "inet addr:(%d+.%d+.%d+.%d+)"
+    end
+    for ip in string.gmatch(result, regex) do
         if string.sub(ip, 1, 5) ~= "127.0" then
             --print(string.format("Add membership on %s", ip))
             sock:setoption("ip-add-membership", {multiaddr=group, interface=ip})
