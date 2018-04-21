@@ -17,7 +17,7 @@ service_triggers()
 
 stop_service()
 {
-    uci del_list dhcp.@dnsmasq[0].addnhosts='/scorekeeper/hosts'
+    uci del_list dhcp.@dnsmasq[0].addnhosts='/var/cache/scorekeeper.hosts'
     uci commit
     killall -HUP dnsmasq
 }
@@ -26,12 +26,12 @@ start_service()
 {
     # check uci to see if we added our config to the dhcp/dnsmasq service
     if [ -z $(uci show dhcp | grep scorekeeper) ]; then
-        uci add_list dhcp.@dnsmasq[0].addnhosts='/scorekeeper/hosts'
+        uci add_list dhcp.@dnsmasq[0].addnhosts='/var/cache/scorekeeper.hosts'
         uci commit
     fi
 
     # Update our hosts table and signal dnsmasq
-    uci show network | grep ipaddr | grep -v 127.0.0.1 | awk -F "[=']" '{ print $3 " results register" }' > /scorekeeper/hosts
+    uci show network | grep ipaddr | grep -v 127.0.0.1 | awk -F "[=']" '{ print $3 " results register" }' > /var/cache/scorekeeper.hosts
     killall -HUP dnsmasq
 
     procd_open_instance
