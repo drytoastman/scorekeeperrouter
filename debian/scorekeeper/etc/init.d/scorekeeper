@@ -10,7 +10,7 @@
 
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/scorekeeper/wacther.lua
+DAEMON=/usr/sbin/watcher.lua
 NAME=scorekeeper
 DESC="scorekeeper watcher"
 
@@ -21,10 +21,10 @@ set -e
 case "$1" in
     start)
         log_daemon_msg "Starting $DESC" $NAME
-        echo "addn-hosts=/scorekeeper/hosts" >> /etc/dnsmasq.conf
-        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /scorekeeper/hosts
+        echo "addn-hosts=/var/cache/scorekeeper.hosts" >> /etc/dnsmasq.conf
+        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /var/cache/scorekeeper.hosts
         killall -HUP dnsmasq
-        if ! start-stop-daemon --start --oknodo --quiet --exec $DAEMON; then log_end_msg 1; else log_end_msg 0; fi
+        if ! start-stop-daemon --start --oknodo --quiet --background --exec $DAEMON; then log_end_msg 1; else log_end_msg 0; fi
         ;;
     stop)
         log_daemon_msg "Stopping $DESC" $NAME
