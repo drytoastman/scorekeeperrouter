@@ -3,7 +3,7 @@
 local json = require ("dkjson")
 
 function readstate()
-    file = io.open("/var/cache/scorekeeper.json", "r")
+    file = io.open("/tmp/scorekeeper.json", "r")
     io.input(file)
     local obj, pos, err = json.decode(io.read())
     io.close(file)

@@ -23,7 +23,7 @@ set -e
 case "$1" in
     start)
         log_daemon_msg "Starting $DESC" $NAME
-        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /var/cache/scorekeeper.hosts
+        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /tmp/scorekeeper.hosts
         killall -HUP dnsmasq
         if ! start-stop-daemon --start --pidfile $PIDFILE --exec $DAEMON -- $ARGS; then log_end_msg 1; else log_end_msg 0; fi
         ;;
