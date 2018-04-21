@@ -4,7 +4,7 @@ local socket = require ("socket")
 local json   = require ("dkjson")
 
 function dump(servers)
-    file = io.open("/scorekeeper/state", "w")
+    file = io.open("/var/cache/scorekeeper.json", "w")
     io.output(file)
     io.write(json.encode(servers))
     io.close(file)
@@ -31,7 +31,6 @@ function main_process()
         end
     end
     handle:close()
-
 
     while 1 do
         local msg, src = sock:receivefrom()
