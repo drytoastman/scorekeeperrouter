@@ -8,6 +8,7 @@ deploy:
   file_glob: true
   file:
     - "openwrt/*.ipk"
+    - "debian/*.deb"
   skip_cleanup: true
   on:
     tags: true
