@@ -1,5 +1,6 @@
-
-TRAVIS_TAG ?= $(shell git describe --tags --abbrev=0)
+ifeq ($(TRAVIS_TAG),)
+TRAVIS_TAG = $(shell git describe --tags --abbrev=0)
+endif
 TARGET := scorekeeper_${TRAVIS_TAG}_all.deb
 FILES  := $(shell find scorekeeper -type f)
 

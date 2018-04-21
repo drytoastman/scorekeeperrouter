@@ -1,2 +1,3 @@
 #!/bin/sh
 /etc/init.d/lighttpd restart
+echo "addn-hosts=/var/cache/scorekeeper.hosts" >> /etc/dnsmasq.conf
