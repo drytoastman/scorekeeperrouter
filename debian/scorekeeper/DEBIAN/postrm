@@ -1,2 +1,2 @@
 #!/bin/sh
-sed -i '/scorekeeper/d' /etc/dnsmasq.conf
+rm -f /etc/dnsmasq.d/scorekeeper
