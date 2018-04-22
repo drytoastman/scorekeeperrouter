@@ -1,0 +1,5 @@
+if [ "$reason" = "STATIC" ] && [ "$ifwireless" = "1" ] && [ "$if_up" = "true" ]; then
+    echo "$new_ip_address results register" >> /tmp/scorekeeper.hosts
+    killall -q -HUP dnsmasq || true
+    /etc/init.d/scorekeeper restart
+fi

@@ -21,14 +21,11 @@ set -e
 case "$1" in
     start)
         log_daemon_msg "Starting scorekeeper"
-        grep address /etc/network/interfaces | awk '{ print $2 " results register" }' > /tmp/scorekeeper.hosts
-        killall -q -HUP dnsmasq || true
         if ! start-stop-daemon --start --pidfile $PIDFILE --exec $DAEMON -- $ARGS; then log_end_msg 1; else log_end_msg 0; fi
         ;;
     stop)
         log_daemon_msg "Stopping scorekeeper"
         if start-stop-daemon --stop --retry 30 --pidfile $PIDFILE --exec $DAEMON; then log_end_msg 0; else log_end_msg 1; fi
-        killall -q -HUP dnsmasq || true
         ;;
 
     restart|reload|force-reload)
