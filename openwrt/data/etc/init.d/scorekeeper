@@ -31,7 +31,7 @@ start_service()
     fi
 
     # Update our hosts table and signal dnsmasq
-    uci show network | grep ipaddr | grep -v 127.0.0.1 | awk -F "[=']" '{ print $3 " results register" }' > /tmp/scorekeeper.hosts
+    uci show network | grep ipaddr | grep -v 127.0.0.1 | awk -F "[=']" '{ print $3 " search results register" }' > /tmp/scorekeeper.hosts
     killall -HUP dnsmasq
 
     procd_open_instance
