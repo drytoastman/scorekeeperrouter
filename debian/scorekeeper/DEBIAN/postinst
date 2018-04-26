@@ -1,3 +1,5 @@
 #!/bin/sh
-/etc/init.d/lighttpd restart
+/usr/sbin/update-rc.d scorekeeper defaults
 echo "addn-hosts=/tmp/scorekeeper.hosts" > /etc/dnsmasq.d/scorekeeper
+/etc/init.d/lighttpd restart
+/etc/init.d/dnsmasq  restart

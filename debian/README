@@ -1,0 +1,75 @@
+# Suggested setup for fresh Raspberry Pi Zero W
+# Based off of 
+# https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/read-only-fs.sh
+
+# install raspbian lite (Etcher is easiest to create a micro-flash driver with)
+# run raspi-config to setup wireless, keyboard, expand filesystem
+
+sudo apt-get update
+apt-get -y --force-yes install lighttpd dnsmasq lua lua-socket lua-dkjson daemon busybox-syslogd hostapd
+apt-get -y --force-yes remove --purge triggerhappy cron logrotate dphys-swapfile fake-hwclock dbus nfs-common rsyslog
+apt-get -y --force-yes autoremove --purge
+systemctl disable apt-daily.timer apt-daily.service apt-daily-upgrade.timer apt-daily-upgrade.service
+
+mv /etc/resolv.conf /tmp/dhcpcd.resolv.conf
+ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
+rm -rf /var/spool/*
+rm -rf /var/cache/*
+
+# Edit /boot/cmdline.txt and append on first line
+# fastboot noswap ro
+
+# Append to /etc/ssh/sshd_config
+# UsePrivilegeSeparation no
+
+# Make edits to fstab
+# Add "ro" to mount options for  "/" and "/boot"
+# Add the following
+# tmpfs /var/spool tmpfs nodev,nosuid 0 0
+# tmpfs /var/cache tmpfs nodev,nosuid 0 0
+# tmpfs /var/log   tmpfs nodev,nosuid 0 0
+# tmpfs /var/tmp   tmpfs nodev,nosuid 0 0
+# tmpfs /tmp       tmpfs nodev,nosuid 0 0
+
+# Edit /etc/dhcpcd.conf and append
+# interface wlan0
+# static ip_address=192.168.XX.1
+# nohook wpa_supplicant
+
+# Edit /etc/lighttpd/lighttpd.conf
+# Delete lines for
+# server.errorlog
+# server.upload-dirs
+# compress.cache-dir
+
+# Suggested /etc/dnsmasq.conf
+# interface=wlan0
+# local=/lan/
+# domain=lan
+# expand-hosts
+# dhcp-range=192.168.XX.10,192.168.XX.250,12h
+# dhcp-leasefile=/tmp/dnsmasq.leases
+
+# Suggested /etc/hostapd.conf
+# interface=wlan0
+# hw_mode=g
+# channel=10
+# ieee80211d=1
+# country_code=US
+# ieee80211n=1
+# wmm_enabled=1
+# ssid=YourRouterSSID
+
+# Edit /etc/default/hostapd uncommand and set
+# DAEMON_CONF="/etc/hostapd.conf"
+
+# Utilities if needing to modify things after reboot into read-only
+echo "mount -o remount,rw /; mount -o remount,rw /boot" > /usr/bin/mountrw
+echo "mount -o remount,ro /; mount -o remount,ro /boot" > /usr/bin/mountro
+chmod +x /usr/bin/mountrw /usr/bin/mountro
+
+wget https://github.com/drytoastman/scorekeeperrouter/releases/download/2.2.1/scorekeeper_2.2.1_all.deb
+dpkg -i scorekeeper_2.2.1_all.deb
+
+reboot
+

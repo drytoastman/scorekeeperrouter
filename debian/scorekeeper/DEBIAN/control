@@ -1,7 +1,7 @@
 Package: scorekeeper
 Version: 2.2.0
 Architecture: all
-Depends: lighttpd, lua, lua-socket, lua-dkjson, daemon
+Depends: lighttpd, dnsmasq, lua, lua-socket, lua-dkjson, daemon
 License: GPLv3
 Maintainer: Brett Wilson
 Description: Listener for scorekeeper services and redirect for web traffic based on discovered values
