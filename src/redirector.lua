@@ -122,42 +122,43 @@ end
 
 function httpd_process()
     local socket = require ("socket")
-
-    sock, err = socket.tcp4()
+    local sock, err = socket.tcp4()
     sock:setoption('reuseaddr', true)
-    res, err = sock:bind('127.0.0.1', 9000)
-    res, err = sock:listen()
+    local res, err = sock:bind('0.0.0.0', 80)
+    local res, err = sock:listen()
 
     while 1 do
         local client = sock:accept()
         client:settimeout(5)
-
-        local hostline = nil
-        local queryline = nil
-        while 1 do
-            local line,err = client:receive("*l")
-            if line == nil or line == "\r\n" or line == "" then break end
-            if (string.sub(line, 1, 3) == "GET") then
-                queryline = line
-            end
-            if (string.sub(line, 1, 5) == "Host:") then
-                hostline = line
-            end
-        end
-
-        local state = readstate()
-        local redirect = find_redirect(state, hostline, queryline)
-
-        if redirect ~= nil then
-            client:send("HTTP/1.1 302 Found\r\n")
-            client:send("Location: "..redirect.."\r\n\r\n")
-        else
-            client:send("HTTP/1.1 200 OK\r\n")
-            client:send("Content-Type: text/html\r\n\r\n")
-            client:send(resulthtml(state))
-        end
-
+        local ok, msg = pcall(client_process, client)
         client:close()
+    end
+end
+
+function client_process(client)
+    local hostline = nil
+    local queryline = nil
+    while 1 do
+        local line,err = client:receive("*l")
+        if line == nil or line == "\r\n" or line == "" then break end
+        if (string.sub(line, 1, 3) == "GET") then
+            queryline = line
+        end
+        if (string.sub(line, 1, 5) == "Host:") then
+            hostline = line
+        end
+    end
+
+    local state = readstate()
+    local redirect = find_redirect(state, hostline, queryline)
+
+    if redirect ~= nil then
+        client:send("HTTP/1.1 302 Found\r\n")
+        client:send("Location: "..redirect.."\r\n\r\n")
+    else
+        client:send("HTTP/1.1 200 OK\r\n")
+        client:send("Content-Type: text/html\r\n\r\n")
+        client:send(resulthtml(state))
     end
 end
 
