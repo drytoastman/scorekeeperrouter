@@ -132,16 +132,21 @@ function httpd_process()
         local client = sock:accept()
         client:settimeout(5)
 
+        local hostline = nil
+        local queryline = nil
         while 1 do
             local line,err = client:receive("*l")
             if line == nil or line == "\r\n" or line == "" then break end
-            print(line)
+            if (string.sub(line, 1, 3) == "GET") then
+                queryline = line
+            end
+            if (string.sub(line, 1, 5) == "Host:") then
+                hostline = line
+            end
         end
 
-        local host  = "nothing" --somethingfromheaders
-        local uri   = "nothing" --somethingfromheaders
         local state = readstate()
-        local redirect = find_redirect(state, host, uri)
+        local redirect = find_redirect(state, hostline, queryline)
 
         if redirect ~= nil then
             client:send("HTTP/1.1 302 Found\r\n")
